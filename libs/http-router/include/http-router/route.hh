@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE for details)
 
 #pragma once
+
 #include <http-router/delegate.hh>
 #include <http-router/path_compiler.hh>
 #include <http-router/request.hh>
