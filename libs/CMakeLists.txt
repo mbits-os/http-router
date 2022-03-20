@@ -1,7 +1,11 @@
 # Copyright (c) 2022 midnightBITS
 # This file is licensed under MIT license (see LICENSE for details)
 
+add_subdirectory(http-router)
+
 add_library(http-router-filters INTERFACE)
+
+set(MODULES_FOLDER "${HTTP_ROUTER_FOLDER}modules")
 
 if (HTTP_ROUTER_WITH_STATIC_FILES)
   add_subdirectory(static_files)

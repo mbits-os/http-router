@@ -1,7 +1,7 @@
 # Copyright (c) 2022 midnightBITS
 # This file is licensed under MIT license (see LICENSE for details)
 
-set(PLUGIN_NAME headers)
+set(PLUGIN_NAME cors)
 
 set(SRCS
   include/http-router/filters/${PLUGIN_NAME}.hh
@@ -17,12 +17,12 @@ target_include_directories(${PLUGIN_NAME}-filter
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
   PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 target_link_libraries(${PLUGIN_NAME}-filter PUBLIC http-router)
 set_target_properties(${PLUGIN_NAME}-filter PROPERTIES
   VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-  FOLDER ${HTTP_ROUTER_EXTRAS_FOLDER}
+  FOLDER ${MODULES_FOLDER}
 )
 
 ##################################################################

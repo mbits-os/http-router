@@ -1,10 +1,16 @@
 # Copyright (c) 2022 midnightBITS
 # This file is licensed under MIT license (see LICENSE for details)
 
-set(PLUGIN_NAME cors)
+set(PLUGIN_NAME static_files)
 
 set(SRCS
   include/http-router/filters/${PLUGIN_NAME}.hh
+  include/http-router/filters/static_files/root_directories.hh
+  include/http-router/filters/static_files/root_directory.hh
+
+  src/static_files_types.cc
+  src/static_files_types.hh
+  src/static_files_types.inl
   src/${PLUGIN_NAME}.cc
 )
 
@@ -17,12 +23,12 @@ target_include_directories(${PLUGIN_NAME}-filter
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
   PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 target_link_libraries(${PLUGIN_NAME}-filter PUBLIC http-router)
 set_target_properties(${PLUGIN_NAME}-filter PROPERTIES
   VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-  FOLDER ${HTTP_ROUTER_EXTRAS_FOLDER}
+  FOLDER ${MODULES_FOLDER}
 )
 
 ##################################################################
@@ -31,5 +37,5 @@ set_target_properties(${PLUGIN_NAME}-filter PROPERTIES
 
 if (HTTP_ROUTER_INSTALL)
   install(TARGETS ${PLUGIN_NAME}-filter)
-  install(DIRECTORY include/http-router DESTINATION include)
+  install(DIRECTORY include/router DESTINATION include)
 endif()

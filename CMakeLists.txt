@@ -13,7 +13,7 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   message(STATUS "http-router: Standalone")
   set(HTTP_ROUTER_STANDALONE ON)
-  set(HTTP_ROUTER_EXTRAS_FOLDER extras)
+  set(HTTP_ROUTER_FOLDER "")
   set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
   # Standalone will be compiled with C++20 to suppport char8_t,
@@ -55,7 +55,7 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 else()
   message(STATUS "http-router: Subdir")
   set(HTTP_ROUTER_STANDALONE OFF)
-  set(HTTP_ROUTER_EXTRAS_FOLDER http-router/extras)
+  set(HTTP_ROUTER_FOLDER external/http-router/ )
 endif()
 
 option(HTTP_ROUTER_TESTING "Compile and/or run self-tests" ${HTTP_ROUTER_STANDALONE})
@@ -72,10 +72,7 @@ find_package(Boost REQUIRED)
 
 include(http-router-warnings)
 
-set(HTTP_ROUTER_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-add_subdirectory(src)
-add_subdirectory(extras)
+add_subdirectory(libs)
 add_subdirectory(examples)
 
 if (HTTP_ROUTER_INSTALL)
