@@ -1,0 +1,33 @@
+// DO NOT MODIFY, THIS FILE IS GENERATED FROM version.hh.in
+//
+// @PROJECT_NAME@/@PROJECT_VERSION@@PROJECT_VERSION_STABILITY@
+//
+// Copyright (c) 2022 midnightBITS
+// This code is licensed under MIT license (see LICENSE for details)
+
+#pragma once
+
+// clang-format off
+
+#include <string_view>
+
+using namespace std::literals;
+
+namespace http_router {
+	struct version {
+		constexpr static unsigned major = @PROJECT_VERSION_MAJOR@;
+		constexpr static unsigned minor = @PROJECT_VERSION_MINOR@;
+		constexpr static unsigned patch = @PROJECT_VERSION_PATCH@;
+		// "-alpha", "-beta", "-rc.1", "-rc.2", and ""
+		constexpr static auto stability = "@PROJECT_VERSION_STABILITY@"sv;
+		constexpr static auto string = "@PROJECT_VERSION@"sv;
+	};
+}  // namespace http_router
+
+#define HTTP_ROUTER_NAME "@PROJECT_NAME@"
+#define HTTP_ROUTER_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+#define HTTP_ROUTER_VERSION_MINOR @PROJECT_VERSION_MINOR@
+#define HTTP_ROUTER_VERSION_PATCH @PROJECT_VERSION_PATCH@
+#define HTTP_ROUTER_VERSION_STABILITY "@PROJECT_VERSION_STABILITY@"
+
+// clang-format on

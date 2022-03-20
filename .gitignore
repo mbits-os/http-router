@@ -30,3 +30,16 @@
 *.exe
 *.out
 *.app
+
+# Build dir
+
+/build
+/build*
+
+# Project-specific configs
+/.vscode
+
+# Temporary / machine-specific files
+*.mo
+*.pyc
+--*

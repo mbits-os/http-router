@@ -1,0 +1,11 @@
+[requires]
+fmt/8.0.1
+gtest/1.10.0
+boost/1.78.0
+
+[options]
+gtest:build_gmock=False
+
+[generators]
+cmake
+cmake_find_package_multi
