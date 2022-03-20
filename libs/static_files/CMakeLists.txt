@@ -37,5 +37,5 @@ set_target_properties(${PLUGIN_NAME}-filter PROPERTIES
 
 if (HTTP_ROUTER_INSTALL)
   install(TARGETS ${PLUGIN_NAME}-filter)
-  install(DIRECTORY include/router DESTINATION include)
+  install(DIRECTORY include/http-router DESTINATION include)
 endif()
