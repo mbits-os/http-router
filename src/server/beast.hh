@@ -34,7 +34,7 @@ namespace http_router::server {
 #endif
 
 	inline void fail(beast::error_code const& ec, char const* what) {
-		fmt::print(stderr, "movies: {}: {} {}\n", what, ec.value(),
+		fmt::print(stderr, "http-router: {}: {} {}\n", what, ec.value(),
 		           ui_to_utf8(ec.message()));
 	}
 }  // namespace http_router::server

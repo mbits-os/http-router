@@ -53,7 +53,7 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
                       BUILD missing
                       SETTINGS "build_type=${_CONAN_SETTING_BUILD_TYPE}")
 else()
-  message(STATUS "movies: Subdir")
+  message(STATUS "http-router: Subdir")
   set(HTTP_ROUTER_STANDALONE OFF)
   set(HTTP_ROUTER_EXTRAS_FOLDER http-router/extras)
 endif()
@@ -62,6 +62,9 @@ option(HTTP_ROUTER_TESTING "Compile and/or run self-tests" ${HTTP_ROUTER_STANDAL
 option(HTTP_ROUTER_EXAMPLES "Compile examples" ${HTTP_ROUTER_STANDALONE})
 option(HTTP_ROUTER_INSTALL "Install the application" ${HTTP_ROUTER_STANDALONE})
 option(HTTP_ROUTER_WITH_STATIC_FILES "Compiles static-files-filter" ON)
+option(HTTP_ROUTER_WITH_CORS "Compiles cors-filter" ON)
+option(HTTP_ROUTER_WITH_LOGGER "Compiles logger-filter" ON)
+option(HTTP_ROUTER_WITH_HEADERS "Compiles headers-filter" ON)
 
 find_package(fmt REQUIRED)
 find_package(GTest REQUIRED)
