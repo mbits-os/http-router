@@ -70,7 +70,7 @@ find_package(fmt REQUIRED)
 find_package(GTest REQUIRED)
 find_package(Boost REQUIRED)
 
-include(warnings)
+include(http-router-warnings)
 
 set(HTTP_ROUTER_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -78,4 +78,6 @@ add_subdirectory(src)
 add_subdirectory(extras)
 add_subdirectory(examples)
 
-include(prepare_pack)
+if (HTTP_ROUTER_INSTALL)
+  include(prepare_pack)
+endif()
