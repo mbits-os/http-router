@@ -7,7 +7,7 @@
 
 namespace http_router::filters {
 	void headers::sending(request const& req, header& resp, std::string_view) {
-		fmt::print("< {} {} HTTP/{}.{}\n", req.method_string(), req.target(),
+		fmt::print("< {} {} HTTP/{}.{}\n", req.method_string(), req.target_full(),
 		           req.version() / 10, req.version() % 10);
 		for (auto const& field : req) {
 			fmt::print("< {}: {}\n", field.name_string(), field.value());

@@ -27,6 +27,7 @@ set(SRCS
   include/http-router/router.hh
   include/http-router/server.hh
   include/http-router/shared_roots.hh
+  include/http-router/uri.hh
 
   src/path_compiler.cc
   src/range.cc
@@ -38,6 +39,7 @@ set(SRCS
   src/server/http_session.hh
   src/server/server.cc
   src/shared_roots.cc
+  src/uri.cc
   src/version.cc
   src/version.hh.in
 )

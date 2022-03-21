@@ -98,7 +98,7 @@ namespace http_router::server {
 	            std::string const& server_name) {
 		std::make_shared<listener>(
 		    ioc, endpoint,
-		    server_name.empty() ? fmt::format("{} {}", server_name, BOOST_BEAST_VERSION_STRING)
+		    !server_name.empty() ? fmt::format("{} {}", server_name, BOOST_BEAST_VERSION_STRING)
 		        : BOOST_BEAST_VERSION_STRING,
 		    handler)
 		    ->run();

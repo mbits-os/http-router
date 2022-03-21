@@ -13,7 +13,7 @@ namespace http_router::filters {
 		auto const& remote = req.remote();
 		auto const ip = remote.address().to_string();
 		auto const method = req.method_string();
-		auto const resource = req.target();
+		auto const resource = req.target_full();
 		auto const status = resp.result_int();
 		fmt::print("{} {} \"{}\" {} - {}\n", ip, method, resource, status,
 		           transmitted);

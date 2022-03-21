@@ -13,7 +13,7 @@ namespace http_router {
 			return {data, size};
 		}
 
-		bool prefixes(boost::string_view prefix, boost::string_view resource) {
+		bool prefixes(std::string_view prefix, std::string_view resource) {
 			if (prefix.empty() && resource.starts_with('/')) return true;
 
 			if (resource.length() < prefix.length()) return false;
@@ -27,9 +27,9 @@ namespace http_router {
 			return resource_continues_with_a_slash || prefix_ends_with_a_slash;
 		}
 
-		bool has_up_dir(boost::string_view resource) {
-			return resource.ends_with("/.."_sv) ||
-			       resource.find("/../"_sv) != boost::string_view::npos;
+		bool has_up_dir(std::string_view resource) {
+			return resource.ends_with("/.."sv) ||
+			       resource.find("/../"sv) != boost::string_view::npos;
 		}
 	}  // namespace
 
@@ -45,6 +45,7 @@ namespace http_router {
 		if (!first) fmt::print(" |"); \
 		first = false;                \
 		fmt::print(" " NAME);         \
+		flags = flags & ~FLAG;        \
 	}
 				auto flags = filter->type;
 				auto first = true;
@@ -86,7 +87,7 @@ namespace http_router {
 	}
 
 	void router::handle_request(response& resp) const {
-		auto const resource = resp.req().target();
+		auto const resource = resp.req().decoded_path();
 		if (resource.empty() || resource[0] != '/' || has_up_dir(resource))
 			return resp.bad_request("Illegal resource path");
 
@@ -117,7 +118,7 @@ namespace http_router {
 	}
 
 	void router::before_send(request const& req, filter::header& resp) const {
-		auto const resource = req.target();
+		auto const resource = req.decoded_path();
 		for (auto& [prefix, filter] : filters) {
 			if (!filter->supports_send()) continue;
 			if (!prefixes(prefix, resource)) continue;
@@ -128,7 +129,7 @@ namespace http_router {
 	void router::after_send(request const& req,
 	                        filter::header& resp,
 	                        size_t transmitted) const {
-		auto const resource = req.target();
+		auto const resource = req.decoded_path();
 		for (auto& [prefix, filter] : filters) {
 			if (!filter->supports_post()) continue;
 			if (!prefixes(prefix, resource)) continue;

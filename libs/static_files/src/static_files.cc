@@ -78,7 +78,7 @@ namespace http_router::filters {
 		auto const status = fs::status(path, ec1);
 		if (!ec1 && fs::is_directory(status)) {
 			return resp.moved(http::status::moved_permanently,
-			                  std::string{req.target()} + "/"),
+			                  std::string{req.target_path()} + "/"),
 			       filtering::finished;
 		}
 
@@ -148,8 +148,8 @@ namespace http_router::filters {
 	std::string static_files_base::resource_from(response const& resp,
 	                                             std::string_view prefix) {
 		auto path =
-		    std::string{resp.req().target().substr(prefix.length() + 1)};
-		if (resp.req().target().back() == '/') path += "index.html";
+		    std::string{resp.req().decoded_path().substr(prefix.length() + 1)};
+		if (resp.req().decoded_path().back() == '/') path += "index.html";
 		return path;
 	}
 }  // namespace http_router::filters
