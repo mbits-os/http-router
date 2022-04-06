@@ -1,8 +1,6 @@
 // Copyright (c) 2022 midnightBITS
 // This code is licensed under MIT license (see LICENSE for details)
 
-#pragma once
-
 #if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable : 4619 4242)

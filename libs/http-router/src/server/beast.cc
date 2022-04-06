@@ -1,8 +1,6 @@
 // Copyright (c) 2022 midnightBITS
 // This code is licensed under MIT license (see LICENSE for details)
 
-#pragma once
-
 #include <server/beast.hh>
 #ifdef _WIN32
 #include <Windows.h>
@@ -39,4 +37,4 @@ namespace http_router::server {
 		return narrow_buffer.get();
 	}
 #endif
-}  // namespace server
+}  // namespace http_router::server

@@ -3,6 +3,7 @@
 #include <http-router/router.hh>
 #include <http-router/server.hh>
 #include <http-router/version.hh>
+#include <thread>
 
 namespace beast = boost::beast;
 namespace net = boost::asio;

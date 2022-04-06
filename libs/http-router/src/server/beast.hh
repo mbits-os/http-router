@@ -30,7 +30,9 @@ namespace http_router::server {
 #ifdef _WIN32
 	std::string ui_to_utf8(std::string_view msg);
 #else
-	std::string_view ui_to_utf8(std::string_view native) { return native; }
+	inline std::string_view ui_to_utf8(std::string_view native) {
+		return native;
+	}
 #endif
 
 	inline void fail(beast::error_code const& ec, char const* what) {

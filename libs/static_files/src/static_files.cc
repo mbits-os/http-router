@@ -99,7 +99,12 @@ namespace http_router::filters {
 			std::error_code ec;
 			auto const time = fs::last_write_time(path, ec);
 			if (ec) return system_clock::time_point::min();
+#if __cpp_lib_chrono > 201611L
 			return clock_cast<system_clock>(time);
+#else
+			// libstdc++ doesn't have clock_cast yet, but they have to_sys
+			return decltype(time)::clock::to_sys(time);
+#endif
 		}();
 
 		resp.set(http::field::content_type, mime_type(path));
