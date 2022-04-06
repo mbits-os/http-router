@@ -10,7 +10,9 @@ project (http-router
 set(PROJECT_VERSION_STABILITY "-alpha") # "", or "-alpha", or "-beta", or "-rc.5"
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+option(HTTP_ROUTER_FORCE_STANDALONE "Ommits the source directory check" OFF)
+
+if (HTTP_ROUTER_FORCE_STANDALONE OR CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   message(STATUS "http-router: Standalone")
   set(HTTP_ROUTER_STANDALONE ON)
   set(HTTP_ROUTER_FOLDER "")
@@ -32,27 +34,10 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_BINARY_DIR}")
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_BINARY_DIR}")
-
-  find_program(CONAN_COMMAND NAMES conan conan.bat)
-
-  if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
-    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-    file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/0.17.0/conan.cmake"
-                  "${CMAKE_BINARY_DIR}/conan.cmake"
-                  EXPECTED_HASH SHA256=3bef79da16c2e031dc429e1dac87a08b9226418b300ce004cc125a82687baeef
-                  TLS_VERIFY ON)
-  endif()
-
   set(CONAN_CMAKE_SILENT_OUTPUT ON)
-  include(${CMAKE_BINARY_DIR}/conan.cmake)
-  if (CMAKE_BUILD_TYPE STREQUAL "")
-      _conan_detect_build_type(BUILD_TYPE Debug)
-  else()
-      _conan_detect_build_type()
-  endif()
-  conan_cmake_install(PATH_OR_REFERENCE ..
-                      BUILD missing
-                      SETTINGS "build_type=${_CONAN_SETTING_BUILD_TYPE}")
+
+  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+  conan_basic_setup()
 else()
   message(STATUS "http-router: Subdir")
   set(HTTP_ROUTER_STANDALONE OFF)
