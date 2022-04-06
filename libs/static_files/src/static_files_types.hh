@@ -11,4 +11,4 @@ using namespace std::literals;
 
 namespace http_router::filters {
 	std::string_view mime_type(std::filesystem::path const& path);
-}  // namespace router::filters
+}  // namespace http_router::filters

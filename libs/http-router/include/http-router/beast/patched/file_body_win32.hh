@@ -125,9 +125,8 @@ namespace boost::beast::http::patched {
 
 			boost::optional<std::pair<const_buffers_type, bool>> get(
 			    error_code& ec) {
-				std::size_t const n =
-				    (std::min)(sizeof(buf_),
-				               beast::detail::clamp(body_.last_ - pos_));
+				std::size_t const n = (std::min)(
+				    sizeof(buf_), beast::detail::clamp(body_.last_ - pos_));
 				if (n == 0) {
 					ec = {};
 					return boost::none;

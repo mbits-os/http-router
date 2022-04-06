@@ -3,11 +3,11 @@
 
 #pragma once
 
+#include <optional>
 #include <string>
 #include <string_view>
-#include <optional>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 namespace http_router::uri {
 	std::pair<std::string_view, std::string_view> split(

@@ -132,7 +132,8 @@ namespace http_router::uri {
 		}
 
 		inline std::string query_urlencode(std::string_view in) {
-			return urlencode_impl(in.data(), in.size(), query_issafe, query_write_ch);
+			return urlencode_impl(in.data(), in.size(), query_issafe,
+			                      query_write_ch);
 		}
 
 		inline std::string urldecode(const char* in, size_t in_len) {

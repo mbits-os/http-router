@@ -12,4 +12,4 @@ namespace http_router::filters {
 		explicit cors() : base{"cors", supports::pre} {}
 		filtering preproc(response& resp, std::string_view prefix) override;
 	};
-}  // namespace router::filters
+}  // namespace http_router::filters
