@@ -18,10 +18,6 @@ namespace http_router::filters {
 	using namespace boost::beast;
 
 	namespace {
-		boost::string_view as_boost(std::string_view view) {
-			return {view.data(), view.size()};
-		}
-
 		std::string format_date(system_clock::time_point date) {
 			auto const tm = fmt::gmtime(system_clock::to_time_t(date));
 
@@ -106,7 +102,7 @@ namespace http_router::filters {
 			return clock_cast<system_clock>(time);
 		}();
 
-		resp.set(http::field::content_type, as_boost(mime_type(path)));
+		resp.set(http::field::content_type, mime_type(path));
 		resp.set(http::field::accept_ranges, "bytes");
 		resp.set(http::field::date, format_date(system_clock::now()));
 		if (sys_date > system_clock::time_point::min())

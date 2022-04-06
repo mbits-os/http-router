@@ -55,6 +55,7 @@ source_group(TREE ${CMAKE_CURRENT_BINARY_DIR} FILES ${GEN_SRCS})
 add_library(http-router STATIC ${SRCS} ${GEN_SRCS})
 
 target_compile_options(http-router PRIVATE ${HTTP_ROUTER_ADDITIONAL_WALL_FLAGS})
+target_compile_options(http-router PUBLIC -DBOOST_BEAST_USE_STD_STRING_VIEW)
 target_compile_features(http-router PRIVATE cxx_std_17)
 target_include_directories(http-router
   PUBLIC

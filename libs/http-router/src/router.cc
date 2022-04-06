@@ -8,11 +8,6 @@ using namespace std::literals;
 
 namespace http_router {
 	namespace {
-		consteval boost::string_view operator""_sv(char const* data,
-		                                           size_t size) noexcept {
-			return {data, size};
-		}
-
 		bool prefixes(std::string_view prefix, std::string_view resource) {
 			if (prefix.empty() && resource.starts_with('/')) return true;
 
@@ -29,7 +24,7 @@ namespace http_router {
 
 		bool has_up_dir(std::string_view resource) {
 			return resource.ends_with("/.."sv) ||
-			       resource.find("/../"sv) != boost::string_view::npos;
+			       resource.find("/../"sv) != std::string_view::npos;
 		}
 	}  // namespace
 
