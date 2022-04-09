@@ -3,7 +3,7 @@
 
 cmake_minimum_required (VERSION 3.20)
 project (http-router
-  VERSION 0.5.5
+  VERSION 0.6.0
   DESCRIPTION "Router library based on Boost.Beast"
   LANGUAGES CXX)
 
