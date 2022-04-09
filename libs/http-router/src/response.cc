@@ -44,6 +44,13 @@ namespace http_router {
 		                              http::obsolete_reason(st), msg));
 	}
 
+    void response::not_found(std::string_view resource) {
+		stock_response(
+		    http::status::not_found,
+		    fmt::format("The resource <code>'{}'</code> was not found.",
+		                resource));
+    }
+
 	void response::moved(status st, std::string const& location) {
 		set(http::field::location, location);
 		stock_response(

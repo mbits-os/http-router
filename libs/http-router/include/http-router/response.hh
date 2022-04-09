@@ -86,6 +86,7 @@ namespace http_router {
 			stock_response(status::bad_request, msg);
 		}
 
+		void not_found(std::string_view resource);
 		void moved(status st, std::string const& location);
 
 	private:

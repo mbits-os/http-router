@@ -106,10 +106,7 @@ namespace http_router {
 			}
 		}
 
-		return resp.stock_response(
-		    http::status::not_found,
-		    fmt::format("The resource <code>'{}'</code> was not found.",
-		                resource));
+		return resp.not_found(resource);
 	}
 
 	void router::before_send(request const& req, filter::header& resp) const {

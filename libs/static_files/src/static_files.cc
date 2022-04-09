@@ -65,11 +65,6 @@ namespace http_router::filters {
 	                                      std::filesystem::path const& path) {
 		auto const& req = resp.req();
 
-		auto const not_found = [](beast::string_view target) {
-			return fmt::format("The resource <code>'{}'</code> was not found.",
-			                   target);
-		};
-
 		std::error_code ec1;
 		auto const status = fs::status(path, ec1);
 		if (!ec1 && fs::is_directory(status)) {
