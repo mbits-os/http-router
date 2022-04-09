@@ -15,8 +15,8 @@ void run(net::ip::tcp::endpoint endpoint,
 	int const thread_count = std::thread::hardware_concurrency() - 1;
 	net::io_context ioc{thread_count + 1};
 
-	auto [interface, port] =
-	    server::listen(ioc, endpoint, handler, server_name);
+	auto [interface, port] = server::listen(ioc, endpoint, handler, server_name,
+	                                        server::reuse_address{false});
 	if (!port) {
 		fmt::print("Error while seting up server...\n");
 		return;

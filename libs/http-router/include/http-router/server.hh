@@ -32,9 +32,24 @@ namespace http_router::server {
 		unsigned short port{};
 	};
 
-	local_endpoint listen(
-	    boost::asio::io_context& ioc,
-	    boost::asio::ip::tcp::endpoint const& endpoint,
-	    router const* handler,
-	    std::string const& server_name = {};
+	template <typename Tag>
+	class explicit_bool {
+	public:
+		explicit_bool() = default;
+		explicit explicit_bool(bool value) noexcept : value_{value} {}
+		explicit operator bool() const noexcept { return value_; }
+		bool value() const noexcept { return value_; }
+
+	private:
+		bool value_{};
+	};
+
+	using reuse_address = explicit_bool<class reuse_address_tag>;
+
+	local_endpoint listen(boost::asio::io_context& ioc,
+	                      boost::asio::ip::tcp::endpoint const& endpoint,
+	                      router const* handler,
+	                      std::string const& server_name = {},
+	                      reuse_address reuse_address_opt = reuse_address{
+	                          true});
 }  // namespace http_router::server

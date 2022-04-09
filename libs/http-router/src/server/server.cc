@@ -39,7 +39,8 @@ namespace http_router::server {
 			listener(net::io_context& ioc,
 			         tcp::endpoint const& endpoint,
 			         std::string const& user_agent,
-			         router const* handler);
+			         router const* handler,
+			         reuse_address reuse_address_opt);
 
 			// Start accepting incoming connections
 			local_endpoint run() {
@@ -76,7 +77,8 @@ namespace http_router::server {
 		listener::listener(net::io_context& ioc,
 		                   tcp::endpoint const& endpoint,
 		                   std::string const& server_name,
-		                   router const* handler)
+		                   router const* handler,
+		                   reuse_address reuse_address_opt)
 		    : ioc_{ioc}
 		    , acceptor_{net::make_strand(ioc)}
 		    , server_name_{server_name}
@@ -91,7 +93,8 @@ namespace http_router::server {
 			}
 
 			// Allow address reuse
-			acceptor_.set_option(net::socket_base::reuse_address(true), ec);
+			acceptor_.set_option(
+			    net::socket_base::reuse_address{reuse_address_opt.value()}, ec);
 			if (ec) {
 				fail(ec, "set_option");
 				return;
@@ -134,14 +137,15 @@ namespace http_router::server {
 	local_endpoint listen(net::io_context& ioc,
 	                      tcp::endpoint const& endpoint,
 	                      router const* handler,
-	                      std::string const& server_name) {
+	                      std::string const& server_name,
+	                      reuse_address reuse_address_opt) {
 		return std::make_shared<listener>(
 		           ioc, endpoint,
 		           !server_name.empty()
 		               ? fmt::format("{} {}", server_name,
 		                             BOOST_BEAST_VERSION_STRING)
 		               : BOOST_BEAST_VERSION_STRING,
-		           handler)
+		           handler, reuse_address_opt)
 		    ->run();
 	}
 }  // namespace http_router::server
