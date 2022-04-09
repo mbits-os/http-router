@@ -46,6 +46,10 @@ int main(int argc, char* argv[]) {
 	using namespace http_router::filters;
 	using tcp = net::ip::tcp;
 
+#ifdef _WIN32
+	SetConsoleOutputCP(CP_UTF8);
+#endif
+
 	auto app =
 	    http_router::router::cfg{}
 	        .use(static_files<root_directory>::make(argc > 1 ? argv[0] : "."))

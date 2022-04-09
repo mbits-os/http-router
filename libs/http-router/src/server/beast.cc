@@ -8,33 +8,92 @@
 
 namespace http_router::server {
 #ifdef _WIN32
+	template <typename Char, size_t Length>
+	struct char_buff {
+		std::array<Char, Length> stack{};
+		std::unique_ptr<Char[]> heap{};
+		size_t used{};
+
+		char_buff() = default;
+
+		explicit char_buff(size_t size) : used{size} {
+			if (size >= Length) heap = std::make_unique<Char[]>(size + 1);
+			this->data()[size] = 0;
+		}
+
+		size_t size() const noexcept { return used; }
+		Char* data() noexcept { return heap ? heap.get() : stack.data(); }
+		Char const* data() const noexcept {
+			return heap ? heap.get() : stack.data();
+		}
+		Char& operator[](size_t index) noexcept { return data()[index]; }
+		std::basic_string_view<Char> view() const noexcept {
+			return {data(), size()};
+		}
+	};
+
+#define CHAR_FWD(NAME)       \
+	template <typename Char> \
+	struct NAME
+
+	CHAR_FWD(opposite_t);
+	CHAR_FWD(win32_conv);
+
+#define OPPO(X, Y)         \
+	template <>            \
+	struct opposite_t<X> { \
+		using type = Y;    \
+	}
+
+#define CONV(CHAR, FUNC, CP, ...)                                         \
+	template <>                                                           \
+	struct win32_conv<CHAR> {                                             \
+		static size_t calc(std::basic_string_view<CHAR> input,            \
+		                   opposite<CHAR>* output,                        \
+		                   size_t size) noexcept {                        \
+			auto const isize = static_cast<int>(size);                    \
+			auto const result =                                           \
+			    FUNC(CP, 0, input.data(), static_cast<int>(input.size()), \
+			         output, __VA_ARGS__);                                \
+			if (result < 1) return 0;                                     \
+			return static_cast<size_t>(result);                           \
+		}                                                                 \
+	}
+
+	template <typename Char>
+	using opposite = typename opposite_t<Char>::type;
+
+	OPPO(char, wchar_t);
+	OPPO(wchar_t, char);
+
+	CONV(char, MultiByteToWideChar, CP_ACP, isize);
+	CONV(wchar_t, WideCharToMultiByte, CP_UTF8, isize, nullptr, nullptr);
+
+	template <typename Char, size_t Length>
+	bool conv(std::basic_string_view<Char> input,
+	          char_buff<opposite<Char>, Length>& result) {
+		using buff_type = char_buff<opposite<Char>, Length>;
+
+		auto size = win32_conv<Char>::calc(input, nullptr, 0);
+		if (size) {
+			result = buff_type{size};
+			size = win32_conv<Char>::calc(input, result.data(), size);
+		}
+
+		return size != 0;
+	}
+
 	std::string ui_to_utf8(std::string_view msg) {
-		int wide_size =
-		    MultiByteToWideChar(CP_ACP, 0, msg.data(),
-		                        static_cast<DWORD>(msg.length()), nullptr, 0);
-		if (wide_size < 1) return {msg.data(), msg.size()};
+		static constexpr auto small_size = 200;
 
-		auto wide_buffer =
-		    std::make_unique<wchar_t[]>(static_cast<size_t>(wide_size) + 1);
-		int result = MultiByteToWideChar(CP_ACP, 0, msg.data(),
-		                                 static_cast<DWORD>(msg.length()),
-		                                 wide_buffer.get(), wide_size);
-		if (result < 1) return {msg.data(), msg.size()};
-		wide_buffer[wide_size] = 0;
+		char_buff<wchar_t, small_size> wide_buffer{};
+		if (!conv(msg, wide_buffer)) return {msg.data(), msg.size()};
 
-		int narrow_size = WideCharToMultiByte(CP_UTF8, 0, wide_buffer.get(), -1,
-		                                      nullptr, 0, nullptr, nullptr);
-		if (narrow_size < 1) return {msg.data(), msg.size()};
+		char_buff<char, small_size> narrow_buffer{};
 
-		auto narrow_buffer =
-		    std::make_unique<char[]>(static_cast<size_t>(narrow_size) + 1);
-		result = WideCharToMultiByte(CP_UTF8, 0, wide_buffer.get(), -1,
-		                             narrow_buffer.get(), narrow_size, nullptr,
-		                             nullptr);
-		if (result < 1) return {msg.data(), msg.size()};
-		narrow_buffer[narrow_size] = 0;
-
-		return narrow_buffer.get();
+		if (!conv(wide_buffer.view(), narrow_buffer))
+			return {msg.data(), msg.size()};
+		return {narrow_buffer.data(), narrow_buffer.size()};
 	}
 #endif
 }  // namespace http_router::server
