@@ -20,13 +20,21 @@
 
 #include <filesystem>
 #include <memory>
+#include <optional>
+#include <string>
 
 namespace http_router {
 	class router;
 }
 namespace http_router::server {
-	void listen(boost::asio::io_context& ioc,
-	            boost::asio::ip::tcp::endpoint const& endpoint,
-	            router const* handler,
-	            std::string const& server_name = {});
+	struct local_endpoint {
+		std::string interface{};
+		unsigned short port{};
+	};
+
+	local_endpoint listen(
+	    boost::asio::io_context& ioc,
+	    boost::asio::ip::tcp::endpoint const& endpoint,
+	    router const* handler,
+	    std::string const& server_name = {};
 }  // namespace http_router::server

@@ -7,14 +7,20 @@
 
 namespace beast = boost::beast;
 namespace net = boost::asio;
+namespace server = http_router::server;
 
-void run(boost::asio::ip::tcp::endpoint endpoint,
+void run(net::ip::tcp::endpoint endpoint,
          http_router::router const* handler,
          std::string const& server_name) {
 	int const thread_count = std::thread::hardware_concurrency() - 1;
-	boost::asio::io_context ioc{thread_count + 1};
+	net::io_context ioc{thread_count + 1};
 
-	http_router::server::listen(ioc, endpoint, handler, server_name);
+	auto [interface, port] =
+	    server::listen(ioc, endpoint, handler, server_name);
+	if (!port) {
+		fmt::print("Error while seting up server...\n");
+		return;
+	}
 	net::signal_set signals{ioc, SIGINT, SIGTERM};
 	signals.async_wait([&](beast::error_code const&, int) {
 		fmt::print("Stopping...\n");
@@ -26,6 +32,7 @@ void run(boost::asio::ip::tcp::endpoint endpoint,
 	for (auto i = thread_count; i > 0; --i) {
 		threads.emplace_back([&] { ioc.run(); });
 	}
+	fmt::print("Listening on http://{}:{}/\n", interface, port);
 	fmt::print("Started. Press ^C to stop.\n");
 	ioc.run();
 
@@ -37,7 +44,7 @@ void run(boost::asio::ip::tcp::endpoint endpoint,
 
 int main(int argc, char* argv[]) {
 	using namespace http_router::filters;
-	using tcp = boost::asio::ip::tcp;
+	using tcp = net::ip::tcp;
 
 	auto app =
 	    http_router::router::cfg{}

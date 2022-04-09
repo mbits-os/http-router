@@ -1,13 +1,34 @@
 // Copyright (c) 2022 midnightBITS
 // This code is licensed under MIT license (see LICENSE for details)
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4619 4242)
+#endif
+#include <boost/asio/ip/host_name.hpp>
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
+
 #include <filesystem>
 #include <http-router/server.hh>
 #include <memory>
 #include <server/http_session.hh>
 
+using namespace std::literals;
+
 namespace http_router::server {
 	namespace {
+		inline std::string host_name() {
+			boost::system::error_code ec{};
+			auto result = net::ip::host_name(ec);
+			if (ec) {
+				fail(ec, "host_name");
+				result = "localhost"s;
+			}
+			return result;
+		}
+
 		class listener : public std::enable_shared_from_this<listener> {
 			net::io_context& ioc_;
 			tcp::acceptor acceptor_;
@@ -21,10 +42,27 @@ namespace http_router::server {
 			         router const* handler);
 
 			// Start accepting incoming connections
-			void run() { loop_step(); }
+			local_endpoint run() {
+				auto const port = [this]() -> net::ip::port_type {
+					try {
+						return acceptor_.local_endpoint().port();
+					} catch (boost::system::system_error const& sys) {
+						fail(sys.code(), "local_endpoint");
+						return 0;
+					} catch (...) {
+						return 0;
+					}
+				}();
+				if (!port) return {};
+				next_accept();
+				return {
+				    .interface = host_name(),
+				    .port = port,
+				};
+			}
 
 		private:
-			void loop_step() {
+			void next_accept() {
 				// The new connection gets its own strand
 				acceptor_.async_accept(
 				    net::make_strand(ioc_),
@@ -89,19 +127,21 @@ namespace http_router::server {
 				}
 			}
 
-			loop_step();
+			next_accept();
 		}
 	}  // namespace
-	void listen(net::io_context& ioc,
-	            tcp::endpoint const& endpoint,
-	            router const* handler,
-	            std::string const& server_name) {
-		std::make_shared<listener>(
-		    ioc, endpoint,
-		    !server_name.empty()
-		        ? fmt::format("{} {}", server_name, BOOST_BEAST_VERSION_STRING)
-		        : BOOST_BEAST_VERSION_STRING,
-		    handler)
+
+	local_endpoint listen(net::io_context& ioc,
+	                      tcp::endpoint const& endpoint,
+	                      router const* handler,
+	                      std::string const& server_name) {
+		return std::make_shared<listener>(
+		           ioc, endpoint,
+		           !server_name.empty()
+		               ? fmt::format("{} {}", server_name,
+		                             BOOST_BEAST_VERSION_STRING)
+		               : BOOST_BEAST_VERSION_STRING,
+		           handler)
 		    ->run();
 	}
 }  // namespace http_router::server
